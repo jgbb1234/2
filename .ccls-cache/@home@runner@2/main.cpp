@@ -286,4 +286,8 @@ void choose3ConsonantsAnd1Vowel(){
 
 int main() {
   readCategories();
+  readPuzzles();
+  chooseCategories();
+  selectAndDisplayPuzzle();
+  choose3ConsonantsAnd1Vowel();
 }
