@@ -22,7 +22,6 @@ char decryptedPuzzle[80];
 char consonants[4];
 char vowel;
 bool hasWildCard;
-int tries = 0;
 
 void readCategories() {
     ifstream inputFile("Categories.txt");
@@ -58,9 +57,9 @@ int generateRandomNumber(int min, int max) {
 }
 
 void chooseCategories() {
-    for (int i = 0; i < 4; i++) {
-        int num = generateRandomNumber(1, 19); // Corrected to generate a random number between 0 and 18
-        cout << "Please choose from one of the following categories:" << endl;
+    cout << "Please choose from one of the following categories:" << endl;
+    for (int i = 0; i < 3; i++) {
+        int num = generateRandomNumber(0, 18); // Corrected to generate a random number between 0 and 18
         cout << i + 1 << ". " << categories[num] << endl;
     }
 
@@ -109,8 +108,8 @@ void selectAndDisplayPuzzle() {
 
     // Copy the decrypted puzzle to the decryptedPuzzle array
     strcpy(decryptedPuzzle, decrypted.c_str());
-
-    cout << "The puzzle to start with is: " << decrypted << endl;
+    
+    cout << "The puzzle to start with is: " << blankOutPuzzle(puzzleChoice.puzzle) << endl;
 }
 
 string revealLetters(char puzzle[]) {
@@ -217,7 +216,7 @@ void revealPrize() {
 }
 
 void makeGuesses(){
-  do{
+  for (int i = 0; i < 3; i++){
     string guess;
     cout << "You have 3 guesses. Make a Guess: " << endl;
     cin >> guess;
@@ -227,11 +226,10 @@ void makeGuesses(){
       cout << "You win!!" << endl;
       revealPrize();
     }
-    tries++;
-  }while (tries < 3);
 
-  if (tries < 3 ){
-    cout << " No more tries! You lose!" << endl;
+    if (i < 3 ){
+      cout << " No more tries! You lose!" << endl;
+    }
   }
 }
 
@@ -250,7 +248,7 @@ void choose3ConsonantsAnd1Vowel(){
     }
     
     while (isVowel(character) != true){
-        cout << "Enter a consonant: ";
+        cout << "Enter a vowel: ";
         cin >> character;
         if (isVowel(character)){
             vowel = character;
@@ -285,6 +283,7 @@ void choose3ConsonantsAnd1Vowel(){
 
 
 int main() {
+  srand(100);
   readCategories();
   readPuzzles();
   chooseCategories();
