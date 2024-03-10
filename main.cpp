@@ -19,6 +19,9 @@ int categoryChoice = 0;
 string categoryChoiceName;
 Puzzle puzzleChoice;
 char decryptedPuzzle[80];
+char consonants[3];
+char vowel;
+bool hasWildCard;
 
 void readCategories() {
     ifstream inputFile("Categories.txt");
@@ -67,25 +70,30 @@ void chooseCategories() {
     categoryChoiceName = categories[categoryChoice]; // Corrected index to match user input
 }
 
-void decryptPuzzle(char encryptedPuzzle[]) {
-    for (int i = 0; i < strlen(encryptedPuzzle); i++) {
-        if (isalpha(encryptedPuzzle[i])) {
-            encryptedPuzzle[i] = toupper(encryptedPuzzle[i]);
-            encryptedPuzzle[i] -= 5;
-            if (encryptedPuzzle[i] < 'A') {
-                encryptedPuzzle[i] += 26;
+string decryptPuzzle(char encryptedPuzzle[]) {
+    string decryptedPuzzle = encryptedPuzzle;
+    for (int i = 0; i < decryptedPuzzle.length(); i++) {
+        if (isalpha(decryptedPuzzle[i])) {
+            decryptedPuzzle[i] = toupper(decryptedPuzzle[i]);
+            decryptedPuzzle[i] -= 5;
+            if (decryptedPuzzle[i] < 'A') {
+                decryptedPuzzle[i] += 26;
             }
         }
     }
+    return decryptedPuzzle;
 }
 
-void blankOutPuzzle(char puzzle[]) {
+string blankOutPuzzle(char puzzle[]) {
+    string blankedPuzzle = puzzle; // Create a copy of the original puzzle
     for (int i = 0; i < strlen(puzzle); i++) {
         if (puzzle[i] != ' ' && puzzle[i] != '-') {
-            puzzle[i] = '#';
+            blankedPuzzle[i] = '#'; // Replace non-space and non-dash characters with #
         }
     }
+    return blankedPuzzle; // Return the modified puzzle
 }
+
 
 void selectAndDisplayPuzzle() {
     for (int i = 0; i < 1125; i++) {
@@ -95,27 +103,97 @@ void selectAndDisplayPuzzle() {
         }
     }
 
-    decryptPuzzle(puzzleChoice.puzzle);
-    strcpy(decryptedPuzzle, decryptPuzzle(puzzleChoice.puzzle));
-    blankOutPuzzle(puzzleChoice.puzzle);
+    // Decrypt the puzzle and store it in a local variable
+    string decrypted = decryptPuzzle(puzzleChoice.puzzle);
 
-    cout << "The puzzle to start with is: " << puzzleChoice.puzzle << endl;
+    // Copy the decrypted puzzle to the decryptedPuzzle array
+    strcpy(decryptedPuzzle, decrypted.c_str());
+
+    cout << "The puzzle to start with is: " << decrypted << endl;
 }
 
-void revealLetters(char puzzle[]) {
+string revealLetters(char puzzle[]) {
+    cout << "Revealing the Letters (R, S, T, L, N, E) ..." << endl;
+
     string lettersToReveal = "RSTLNE";
     for (int i = 0; i < strlen(puzzle); i++) {
-        if (lettersToReveal.find(puzzle[i]) != string::npos) {
+        if (lettersToReveal.find(toupper(puzzle[i])) != string::npos) {
             puzzle[i] = toupper(puzzle[i]);
         }
     }
+    cout << puzzle << endl;
+    return puzzle;
 }
 
-void revealLetters(){
-  cout << "Revealing R, S, T, L, N, E ..." << endl;
-  
-  
+bool isConsonant(char c) {
+    // Convert the character to lowercase for easier comparison
+    c = tolower(c);
+
+    // Check if the character is an alphabet and not a vowel
+    if (isalpha(c) && c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u') {
+        return true;
+    }
+    return false;
 }
+
+bool isVowel(char c) {
+    // Convert the character to lowercase for easier comparison
+    c = tolower(c);
+
+    // Check if the character is an alphabet and is a vowel
+    if (isalpha(c) && (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')) {
+        return true;
+    }
+    return false;
+}
+
+void getHasWildCard(){
+  int choice;
+  do{
+    cout << "Do you have the wildcard? (0-No, 1-Yes)";
+    cin >> choice;
+  }while(choice != 0 || choice != 1);  
+
+  if (choice == 1)
+    hasWildCard = true;
+  if (choice == 2)
+    hasWildCard = false;
+} 
+
+
+
+void choose3ConsonantsAnd1Vowel(){
+    int i = 0;
+    char character = '\0';
+  
+    while (strlen(consonants) < 3){
+        cout << "Enter a consonant: ";
+        char ch;
+        cin >> ch;
+        if (isConsonant(ch)){
+            consonants[i] = ch;
+            i++;
+        }
+    }
+    
+    while (isVowel(character) != true){
+        cout << "Enter a consonant: ";
+        cin >> character;
+        if (isVowel(character)){
+            vowel = character;
+        }
+    }
+
+    getHasWildCard();
+    if (hasWildCard == true){
+      
+    }
+
+    if (hasWildCard == false){
+      
+    }
+}
+
 
 int main() {
   std::cout << "Hello World!\n";
