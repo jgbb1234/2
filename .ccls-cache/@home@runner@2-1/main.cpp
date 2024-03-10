@@ -34,7 +34,9 @@ void readCategories() {
     for (int i = 0; i < 19; i++) {
         getline(inputFile, categories[i]);
     }
-
+  
+  cout << "# of categories read from the file: " << sizeof(categories) / sizeof(categories[0]) << endl;
+    
     inputFile.close();
 }
 
@@ -49,6 +51,7 @@ void readPuzzles() {
         getline(inputFile, puzzles[i].category);
         inputFile.getline(puzzles[i].puzzle, 80); // Changed from getline to getline
     }
+    cout << "# of puzzles read from the file: " << sizeof(puzzles) / sizeof(puzzles[0]) << endl;
 
     inputFile.close();
 }
@@ -228,10 +231,10 @@ void makeGuesses(){
         string upperPuzzle = uppercaseCharArray(decryptedPuzzle);
         if (upperGuess == upperPuzzle){
             cout << "You win!!" << endl;
+            cout << upperPuzzle; 
             revealPrize();
             guessedCorrectly = true;
-            break; // Exit the loop if the guess is correct
-            cout << upperPuzzle; 
+            break; // Exit the loop if the guess is correct 
         }
     }
     if (!guessedCorrectly) {
