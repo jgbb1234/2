@@ -19,9 +19,10 @@ int categoryChoice = 0;
 string categoryChoiceName;
 Puzzle puzzleChoice;
 char decryptedPuzzle[80];
-char consonants[3];
+char consonants[4];
 char vowel;
 bool hasWildCard;
+int tries = 0;
 
 void readCategories() {
     ifstream inputFile("Categories.txt");
@@ -152,7 +153,7 @@ void getHasWildCard(){
   do{
     cout << "Do you have the wildcard? (0-No, 1-Yes)";
     cin >> choice;
-  }while(choice != 0 || choice != 1);  
+  }while(choice != 0 && choice != 1);  
 
   if (choice == 1)
     hasWildCard = true;
@@ -160,7 +161,79 @@ void getHasWildCard(){
     hasWildCard = false;
 } 
 
+string revealCharacters(char consonants[], char vowel, char puzzle[]) {
+    string revealed;
 
+    for (size_t i = 0; i < strlen(puzzle); ++i) {
+        if (puzzle[i] == ' ' || puzzle[i] == '-') {
+            revealed += puzzle[i];
+        } else {
+            bool found = false;
+            for (size_t j = 0; j < strlen(consonants); ++j) {
+                if (puzzle[i] == consonants[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && puzzle[i] != vowel) {
+                revealed += '#';
+            } else {
+                revealed += puzzle[i];
+            }
+        }
+    }
+
+    return revealed;
+}
+
+string uppercaseCharArray(char arr[]) {
+    string result;
+    size_t length = strlen(arr); // Determine the length of the array
+    for (size_t i = 0; i < length; ++i) {
+        result += toupper(arr[i]); // Convert each character to uppercase and append to result
+    }
+    return result;
+}
+
+string uppercaseString(const string& str) {
+    string result;
+    for (char c : str) {
+        result += toupper(c); // Convert each character to uppercase and append to result
+    }
+    return result;
+}
+
+void revealPrize() {
+    int prize = generateRandomNumber(1, 25);
+    if (prize <= 3) {
+        cout << "Congratulations! You've won a car!" << endl;
+    } else if (prize <= 22) {
+        cout << "Congratulations! You've won $40,000.00!" << endl;
+    } else if (prize <= 24) {
+        cout << "Congratulations! You've won $45,000.00!" << endl;
+    } else {
+        cout << "Congratulations! You've won the jackpot of $100,000.00!" << endl;
+    }
+}
+
+void makeGuesses(){
+  do{
+    string guess;
+    cout << "You have 3 guesses. Make a Guess: " << endl;
+    cin >> guess;
+    string upperGuess = uppercaseString(guess);
+    string upperPuzzle = uppercaseCharArray(decryptedPuzzle);
+    if (upperGuess == upperPuzzle){
+      cout << "You win!!" << endl;
+      revealPrize();
+    }
+    tries++;
+  }while (tries < 3);
+
+  if (tries < 3 ){
+    cout << " No more tries! You lose!" << endl;
+  }
+}
 
 void choose3ConsonantsAnd1Vowel(){
     int i = 0;
@@ -186,15 +259,31 @@ void choose3ConsonantsAnd1Vowel(){
 
     getHasWildCard();
     if (hasWildCard == true){
-      
+      char choice;
+      cout << "Choose a fourth consonant" << endl;
+      cin >> choice;
+      while (isConsonant(choice) != true){
+          cout << "Enter a consonant: ";
+          cin >> choice;
+          if (isVowel(choice)){
+              consonants[3] = choice;
+          }  
+      }
+    
+      string blankedWord = revealCharacters(consonants, vowel, decryptedPuzzle);
+      cout << "The puzzle is: " << blankedWord << endl;
+      cout << blankedWord;
+      makeGuesses();
     }
 
     if (hasWildCard == false){
-      
+      string blankedWord = revealCharacters(consonants, vowel, decryptedPuzzle);
+      cout << "The puzzle is: " << blankedWord << endl;
+      makeGuesses();
     }
 }
 
 
 int main() {
-  std::cout << "Hello World!\n";
+  readCategories();
 }
